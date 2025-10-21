@@ -1,30 +1,11 @@
-# Podcast-Recommendation-API
+# Podcast-Scrapers
 
 ## Overview
 
-This repository is dedicated to implementing the **API layer for the Podcast Recommendation Platform**.  
-The API is responsible for **capturing and managing user interactions and activity logs**, which serve as the foundation for the recommendation engine.
+This repository is dedicated to developing and managing a set of **web scrapers** that extract podcast data directly from various **websites and online sources**.  
+The goal is to **collect, clean, and standardize** podcast metadata and episode information to feed into the **Podcast Recommendation Platform**.
 
-It should be designed to **store data in MongoDB** for persistence and **cache frequently accessed data in Redis** to ensure high performance and low latency.
-
-The API should handle events such as:  
-- User subscriptions to channels or podcasts  
-- Likes and dislikes  
-- Podcast play and listen history  
-- Follows, unfollows, and other user actions  
-
-These interactions are used to generate personalized podcast recommendations.
-
----
-
-## Features
-
-- RESTful API endpoints for user interactions  
-- **MongoDB integration** for storing user actions and metadata  
-- **Redis caching** for improving API performance and reducing database load  
-- Logging of all user activities for recommendation analysis  
-- Scalable, modular, and easy-to-extend design  
-- Kafka integration for streaming user events
+The scrapers should be modular, reliable, and easily extendable to support new podcast directories or sites.
 
 ---
 
@@ -32,11 +13,22 @@ These interactions are used to generate personalized podcast recommendations.
 
 The documentation should clearly explain:
 
-* API endpoints and their expected request/response formats  
-* Data models and MongoDB schema design  
-* Redis caching logic and expiration policies  
-* Deployment steps and environment configuration  
-* Integration flow with the recommendation engine  
-* Authentication and authorization mechanisms  
+* List of websites and sources being scraped  
+* Scraper architecture and crawling flow  
+* Data fields extracted (title, author, category, URL, episode details, etc.)  
+* Steps to run scrapers manually or automatically (cron jobs, Celery, etc.)  
+* Storage strategy (MongoDB, JSON files, Elasticsearch, etc.)  
+* Error handling, rate limiting, and anti-blocking techniques (headers, delays, proxies)  
+
+---
+
+## Features
+
+- Web scraping from multiple podcast platforms and websites  
+- Extraction of podcast metadata (name, description, category, rating, etc.)  
+- Extraction of episode information (title, duration, publish date, etc.)  
+- Data cleaning and normalization for downstream processing  
+- Logging, retry, and monitoring mechanisms  
+- Modular structure to easily add new website scrapers  
 
 ---
