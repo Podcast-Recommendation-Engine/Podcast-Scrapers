@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  podcast-scraper:
+    build: .
+    container_name: podcast-scraper
+    volumes:
+      - podcast_downloads:/app/downloads
+      - ./src/config/settings.py:/app/src/config/settings.py:ro
+    networks:
+      - podcast_network
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+volumes:
+  podcast_downloads:
+    driver: local
+
+networks:
+  podcast_network:
+    driver: bridge
+
