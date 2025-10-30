@@ -5,6 +5,7 @@ import os
 import time
 from urllib.parse import urlparse, unquote
 from util.file_utils import sanitize_title
+from util.audio_converter import convert_to_wav
 from downloader.audio_downloader import download_file
 
 def fetch_rss_feed(url):
@@ -15,7 +16,7 @@ def fetch_rss_feed(url):
     except requests.RequestException:
         return None
 
-def parse_and_download(content, save_dir, retries=3, sleep_time=1, max_episodes=None):
+def parse_and_download(content, save_dir, retries=3, sleep_time=1, max_episodes=None, convert_to_wav_flag=False):
     feed = feedparser.parse(content)
     total_available = sum(1 for entry in feed.entries if any(link.type == 'audio/mpeg' for link in entry.get('links', [])))
     total_audio_files = min(total_available, max_episodes) if max_episodes else total_available
@@ -40,6 +41,8 @@ def parse_and_download(content, save_dir, retries=3, sleep_time=1, max_episodes=
 
                     if download_file(link.href, filename, retries):
                         successful_downloads += 1
+                        if convert_to_wav_flag:
+                            convert_to_wav(filename)
                     
                     if max_episodes and audio_file_counter >= max_episodes:
                         break

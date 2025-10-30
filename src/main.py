@@ -1,6 +1,6 @@
 import os
 import logging
-from config import RSS_FEEDS, SAVE_DIRECTORY, DOWNLOAD_RETRIES, SLEEP_TIME, MAX_EPISODES_PER_FEED
+from config import RSS_FEEDS, SAVE_DIRECTORY, DOWNLOAD_RETRIES, SLEEP_TIME, MAX_EPISODES_PER_FEED, CONVERT_TO_WAV
 from parsers import fetch_rss_feed, parse_and_download
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -21,7 +21,7 @@ def main():
         
         content = fetch_rss_feed(podcast.url)
         if content:
-            successful, total = parse_and_download(content, SAVE_DIRECTORY, DOWNLOAD_RETRIES, SLEEP_TIME, MAX_EPISODES_PER_FEED)
+            successful, total = parse_and_download(content, SAVE_DIRECTORY, DOWNLOAD_RETRIES, SLEEP_TIME, MAX_EPISODES_PER_FEED, CONVERT_TO_WAV)
             total_successful += successful
             total_files += total
             logging.info(f"Completed: {successful}/{total} files\n")
