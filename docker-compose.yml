@@ -5,13 +5,13 @@ services:
     build: .
     container_name: podcast-scraper
     volumes:
-      - podcast_downloads:/app/downloads
+      - ./downloads:/app/downloads  # Direct folder mapping
       - ./src/config/settings.py:/app/src/config/settings.py:ro
     networks:
       - podcast_network
     environment:
       - PYTHONUNBUFFERED=1
-    restart: unless-stopped
+      - DOWNLOAD_DIR=/app/downloads
 
 volumes:
   podcast_downloads:

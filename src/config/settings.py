@@ -1,3 +1,4 @@
+import os
 from models.podcast import Podcast
 
 RSS_FEEDS = [
@@ -5,7 +6,7 @@ RSS_FEEDS = [
     Podcast('joe-rogan', 'https://feeds.megaphone.fm/GLT1412515089'),
 ]
 
-SAVE_DIRECTORY = "../downloads"
+SAVE_DIRECTORY = os.getenv('DOWNLOAD_DIR', '../downloads')
 MAX_EPISODES_PER_FEED = 1
 DOWNLOAD_RETRIES = 3
 SLEEP_TIME = 1
