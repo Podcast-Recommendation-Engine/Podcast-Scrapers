@@ -1,34 +1,44 @@
-import os
+import time
+from config import RSS_FEEDS, CHUNK_SIZE, RAW_PATH, AUDIO_PATH, JSON_FILENAME, NUMBER_OF_PODCAST_FOR_EACH_PODCAST
+from utils import convert_mp3_to_wav, download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data
 import logging
-from config import RSS_FEEDS, SAVE_DIRECTORY, DOWNLOAD_RETRIES, SLEEP_TIME, MAX_EPISODES_PER_FEED, CONVERT_TO_WAV
-from parsers import fetch_rss_feed, parse_and_download
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s: %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
-def main():
-    if not RSS_FEEDS:
-        logging.error("No RSS feeds configured")
-        return
-    
-    if not os.path.exists(SAVE_DIRECTORY):
-        os.makedirs(SAVE_DIRECTORY)
-    
-    total_successful = 0
-    total_files = 0
-    
-    for idx, podcast in enumerate(RSS_FEEDS, 1):
-        logging.info(f"\nProcessing {idx}/{len(RSS_FEEDS)}: {podcast.name}")
+logging.Formatter.converter = time.gmtime 
+
+
+def pipeline():
+    logging.info("Starting podcast scraping pipeline")
+
+    all_data = []
+    for feed_url in RSS_FEEDS:
+        logging.info(f"Processing feed: {feed_url}")
+        # Fetching each feed 
+        content = fetch_data(feed_url)
         
-        content = fetch_rss_feed(podcast.url)
         if content:
-            successful, total = parse_and_download(content, SAVE_DIRECTORY, DOWNLOAD_RETRIES, SLEEP_TIME, MAX_EPISODES_PER_FEED, CONVERT_TO_WAV)
-            total_successful += successful
-            total_files += total
-            logging.info(f"Completed: {successful}/{total} files\n")
+            data_list = parse_data(content)
+            logging.info(f"Found {len(data_list)} episodes in feed")
+            all_data.extend(data_list)
+            for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
+                logging.info(f"Processing episode: {episode['title']}")
+                safe_filename = sanitize_filename(episode['title'])
+                mp3_path = download_podcast_mp3(
+                    episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE
+                )
+                if mp3_path:
+                    convert_mp3_to_wav(mp3_path)
         else:
-            logging.error(f"Failed to fetch: {podcast.name}\n")
+            logging.warning(f"Failed to fetch content from {feed_url}")
     
-    logging.info(f"\nTotal: {total_successful}/{total_files} files downloaded\n")
+    logging.info(f"Saving {len(all_data)} total episodes to JSON")
+    save_data(all_data, JSON_FILENAME, RAW_PATH)
+    logging.info("Pipeline completed successfully")
 
 if __name__ == "__main__":
-    main()
+    pipeline()
