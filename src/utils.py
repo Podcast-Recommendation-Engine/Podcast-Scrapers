@@ -68,7 +68,8 @@ def parse_data(content: str):
         'subtitle': entry.get('subtitle'),
         'authors': entry.get('authors'),
         'image': entry.get('image'),
-        'itunes_duration': duration
+        'itunes_duration': duration,
+        'wav_path': None
         }
 
         parsed_data.append(episode)
