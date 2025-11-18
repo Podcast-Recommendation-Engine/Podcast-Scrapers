@@ -1,6 +1,6 @@
 import time
 from config import RSS_FEEDS, CHUNK_SIZE, RAW_PATH, AUDIO_PATH, JSON_FILENAME, NUMBER_OF_PODCAST_FOR_EACH_PODCAST
-from utils import convert_mp3_to_wav, download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data
+from utils import  download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data
 import logging
 
 logging.basicConfig(
@@ -31,13 +31,10 @@ def pipeline():
 
                 safe_filename = sanitize_filename(episode['title'])
                 
-                mp3_path = download_podcast_mp3(
+                download_podcast_mp3(
                     episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE
                 )
-
-                if mp3_path:
-                    wav_path = convert_mp3_to_wav(mp3_path)
-                    episode['wav_path'] = wav_path  
+                
         else:
             logging.warning(f"Failed to fetch content from {feed_url}")
     

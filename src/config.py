@@ -1,6 +1,6 @@
 RSS_FEEDS = [
     "https://lexfridman.com/feed/podcast/",
-    "https://feeds.megaphone.fm/GLT1412515089"
+    # "https://feeds.megaphone.fm/GLT1412515089"
 ]
 CHUNK_SIZE = 8192
 RAW_PATH = "data/raw"

@@ -123,28 +123,6 @@ def sanitize_filename(filename: str) -> str:
     return filename
 
 
-def convert_mp3_to_wav(mp3_path: str, delete_mp3: bool = True):
-    try:
-        wav_path = os.path.splitext(mp3_path)[0] + '.wav'
-        audio = AudioSegment.from_mp3(mp3_path)
-        audio = audio.set_channels(1)
-        audio = audio.set_frame_rate(16000)
-        audio = audio.set_sample_width(2)
-        audio.export(wav_path, format='wav')
-
-        logging.info(f"Converted: {mp3_path} -> {wav_path}")
-        
-        # Cleanup MP3 after successful conversion
-        if delete_mp3:
-            os.remove(mp3_path)
-            logging.info(f"Removed original MP3: {mp3_path}")
-        
-        return wav_path
-
-    except Exception as e:
-        logging.error(f"Error converting file: {e}")
-        return None
-
 def generate_uuid()-> str:
     return str(uuid.uuid4())
 
@@ -161,3 +139,26 @@ def determine_duration_in_seconds(duration: str) -> float:
         m, s = parts
 
     return h * 3600 + m * 60 + s 
+
+
+# def convert_mp3_to_wav(mp3_path: str, delete_mp3: bool = True):
+#     try:
+#         wav_path = os.path.splitext(mp3_path)[0] + '.wav'
+#         audio = AudioSegment.from_mp3(mp3_path)
+#         audio = audio.set_channels(1)
+#         audio = audio.set_frame_rate(16000)
+#         audio = audio.set_sample_width(2)
+#         audio.export(wav_path, format='wav')
+
+#         logging.info(f"Converted: {mp3_path} -> {wav_path}")
+        
+#         # Cleanup MP3 after successful conversion
+#         # if delete_mp3:
+#         #     os.remove(mp3_path)
+#         #     logging.info(f"Removed original MP3: {mp3_path}")
+        
+#         return wav_path
+
+#     except Exception as e:
+#         logging.error(f"Error converting file: {e}")
+        # return None
