@@ -17,26 +17,23 @@ def pipeline():
 
     all_data = []
     for feed_url in RSS_FEEDS:
+
         logging.info(f"Processing feed: {feed_url}")
-        # Fetching each feed 
         content = fetch_data(feed_url)
 
-        if content:
-            data_list = parse_data(content)
-            logging.info(f"Found {len(data_list)} episodes in feed")
-            all_data.extend(data_list)
-
-            for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
-                logging.info(f"Processing episode: {episode['title']}")
-
-                safe_filename = sanitize_filename(episode['title'])
-                
-                download_podcast_mp3(
-                    episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE
-                )
-                
-        else:
+        if not content:
             logging.warning(f"Failed to fetch content from {feed_url}")
+            continue
+
+        data_list = parse_data(content)
+        logging.info(f"Found {len(data_list)} episodes in feed")
+        
+        all_data.extend(data_list)
+
+        for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
+            logging.info(f"Processing episode: {episode['title']}")
+            safe_filename = sanitize_filename(episode['title'])
+            download_podcast_mp3( episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
     
     logging.info(f"Saving {len(all_data)} total episodes to JSON")
     save_data(all_data, JSON_FILENAME, RAW_PATH)
