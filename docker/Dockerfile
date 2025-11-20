@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml .
 COPY src/ ./src/
 
-RUN pip install --no-cache-dir .
+# RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir . && rm -rf build
 
 RUN mkdir -p /app/data/audio /app/data/raw
 

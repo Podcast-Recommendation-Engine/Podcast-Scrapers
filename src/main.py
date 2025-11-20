@@ -1,7 +1,10 @@
 import time
-from config import RSS_FEEDS, CHUNK_SIZE, RAW_PATH, AUDIO_PATH, JSON_FILENAME, NUMBER_OF_PODCAST_FOR_EACH_PODCAST
-from utils import  download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data
+
+from config import ACKS, AUDIO_PATH, CHUNK_SIZE, JSON_FILENAME, KAFKA_URL, NUMBER_OF_PODCAST_FOR_EACH_PODCAST, PORT, RAW_PATH, RSS_FEEDS, TOPIC
+from utils import  config, delivery_report, download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data
 import logging
+from confluent_kafka import Producer
+
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)s: %(message)s',
@@ -9,13 +12,16 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-logging.Formatter.converter = time.gmtime 
+logging.Formatter.converter = time.gmtime  
 
 
 def pipeline():
     logging.info("Starting podcast scraping pipeline")
 
     all_data = []
+    config_value = config(url= KAFKA_URL, port= PORT, acks= ACKS)
+    producer= Producer(config_value)
+
     for feed_url in RSS_FEEDS:
 
         logging.info(f"Processing feed: {feed_url}")
@@ -33,7 +39,17 @@ def pipeline():
         for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
             logging.info(f"Processing episode: {episode['title']}")
             safe_filename = sanitize_filename(episode['title'])
-            download_podcast_mp3( episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
+            full_path = download_podcast_mp3(episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
+            
+            if full_path:
+                logging.info(f"Sending to Kafka: {full_path}")
+                producer.produce(
+                    topic=TOPIC,
+                    value=full_path.encode('utf-8'), 
+                    callback=delivery_report
+                )
+            
+    producer.flush()
     
     logging.info(f"Saving {len(all_data)} total episodes to JSON")
     save_data(all_data, JSON_FILENAME, RAW_PATH)

@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  kafka:
+    image: confluentinc/cp-kafka:7.8.3
+    container_name: kafka
+    ports:
+    - "9092:9092"   # internal container-to-container listener (optional)
+    - "29092:29092" # host-accessible listener for tools on Windows
+
+    env_file:
+      - ../.env
+    volumes:
+      - podcast-data:/var/lib/kafka/data
+    networks:
+      - podcast-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
   podcast-scraper:
     build:
       context: ..
@@ -9,10 +28,12 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      - podcast-data:/app/data
-      - ../data:/app/data-local
+      - ../data:/app/data
     networks:
       - podcast-network
+    depends_on:
+      kafka:
+        condition: service_healthy
 
 volumes:
   podcast-data:
