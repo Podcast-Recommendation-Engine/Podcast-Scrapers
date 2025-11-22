@@ -5,8 +5,8 @@ services:
     image: confluentinc/cp-kafka:7.8.3
     container_name: kafka
     ports:
-    - "9092:9092"   # internal container-to-container listener (optional)
-    - "29092:29092" # host-accessible listener for tools on Windows
+    - "9092:9092" 
+    - "29092:29092" 
 
     env_file:
       - ../.env
@@ -35,12 +35,14 @@ services:
       kafka:
         condition: service_healthy
 
+
 volumes:
   podcast-data:
-    driver: local
+    external: true
 
 networks:
   podcast-network:
     driver: bridge
+    external: true
 
 
