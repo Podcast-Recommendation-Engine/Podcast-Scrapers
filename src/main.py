@@ -38,7 +38,7 @@ def pipeline():
             safe_filename = sanitize_filename(episode['title'])
             # full_path = download_podcast_mp3(episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
             # I only use this for testing the stt cause i have a small audio file called test.mp3
-            full_path= "data/audio/test.mp3"
+            full_path= "data/bronze/audio/test.mp3"
 
             episode ['full_path']= full_path
 
