@@ -38,7 +38,7 @@ def pipeline():
 
         for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
             logging.info(f"Processing episode: {episode['title']}")
-            safe_filename = sanitize_filename(episode['title'])
+            # safe_filename = sanitize_filename(episode['title'])
             # full_path = download_podcast_mp3(episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
             full_path= "data/audio/test.mp3"
             
