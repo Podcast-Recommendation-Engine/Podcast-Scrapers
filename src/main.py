@@ -18,7 +18,6 @@ logging.Formatter.converter = time.gmtime
 def pipeline():
     logging.info("Starting podcast scraping pipeline")
 
-    all_data = []
     config_value = config(url= KAFKA_URL, port= PORT, acks= ACKS)
     producer= Producer(config_value)
 
@@ -33,8 +32,6 @@ def pipeline():
 
         data_list = parse_data(content)
         logging.info(f"Found {len(data_list)} episodes in feed")
-        
-        all_data.extend(data_list)
 
         for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
             logging.info(f"Processing episode: {episode['title']}")
@@ -42,6 +39,8 @@ def pipeline():
             # full_path = download_podcast_mp3(episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
             # I only use this for testing the stt cause i have a small audio file called test.mp3
             full_path= "data/audio/test.mp3"
+
+            episode ['full_path']= full_path
 
             logging.info(f"Saving {safe_filename}  episode to JSON")
             save_data(data= episode, filename= safe_filename.removesuffix(".mp3"), path= RAW_PATH)
