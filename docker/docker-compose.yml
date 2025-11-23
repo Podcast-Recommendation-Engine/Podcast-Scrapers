@@ -11,7 +11,7 @@ services:
     env_file:
       - ../.env
     volumes:
-      - podcast-data:/var/lib/kafka/data
+      - kafka-data:/var/lib/kafka/data
     networks:
       - podcast-network
     healthcheck:
@@ -28,7 +28,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      - ../data:/app/data
+      - ../data/bronze:/app/data/bronze
     networks:
       - podcast-network
     depends_on:
@@ -38,6 +38,8 @@ services:
 
 volumes:
   podcast-data:
+    external: true
+  kafka-data:
     external: true
 
 networks:

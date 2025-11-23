@@ -7,14 +7,13 @@ import feedparser
 import requests
 import logging
 
-
 logging.basicConfig(
     format='%(asctime)s %(levelname)s: %(message)s',
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-
 logging.Formatter.converter = time.gmtime 
+
 
 def fetch_data(feed: str):
     try:
@@ -28,11 +27,9 @@ def fetch_data(feed: str):
         logging.error(f"Error fetching data: {e}")
         return None
 
-
 def parse_data(content: str):
     parsed_data = []
     data = feedparser.parse(content)
-
     for entry in data.entries:
 
         published_parsed = entry.get('published_parsed')
@@ -76,13 +73,12 @@ def parse_data(content: str):
     return parsed_data
 
  
-def save_data(data: list, filename: str, path: str):
+def save_data(data: dict, filename: str, path: str):
     os.makedirs(path, exist_ok=True)
-    full_path = os.path.join(path, filename)
+    full_path = os.path.join(path, f"{filename}.json")
     with open(full_path, "w", encoding='utf-8') as file:
         json.dump(data, file, ensure_ascii=False, indent=2)
     
-
 
 def download_podcast_mp3(url: str, filename: str, path: str, chunk_size: int = 8192):
     try:
