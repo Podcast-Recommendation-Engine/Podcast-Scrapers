@@ -21,7 +21,7 @@ def fetch_data(feed: str):
         if conn.status_code != 200:
             logging.warning(f"Failed to fetch data from {feed} (status code: {conn.status_code})")
             return None
-        
+        # I should see the difference between it and json output and the impact of it 
         return conn.text
     except requests.exceptions.RequestException as e:
         logging.error(f"Error fetching data: {e}")

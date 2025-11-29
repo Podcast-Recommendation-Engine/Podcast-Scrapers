@@ -5,16 +5,6 @@ from utils import  config, delivery_report, download_podcast_mp3, fetch_data, pa
 import logging
 from confluent_kafka import Producer
 
-
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s: %(message)s',
-    level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-
-logging.Formatter.converter = time.gmtime  
-
-
 def pipeline():
     logging.info("Starting podcast scraping pipeline")
 
@@ -46,6 +36,7 @@ def pipeline():
             save_data(data= episode, filename= safe_filename.removesuffix(".mp3"), path= RAW_PATH)
             if full_path:
                 logging.info(f"Sending to Kafka: {full_path}")
+                # I need to check the difference between this implmentation and using with  as producer
                 producer.produce(
                     topic=TOPIC,
                     value=json.dumps(episode).encode('utf-8'), 
@@ -56,4 +47,12 @@ def pipeline():
     logging.info("Pipeline completed successfully")
 
 if __name__ == "__main__":
+
+    logging.basicConfig(
+    format='%(asctime)s %(levelname)s: %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    logging.Formatter.converter = time.gmtime  
+
     pipeline()
