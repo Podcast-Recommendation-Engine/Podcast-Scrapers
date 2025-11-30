@@ -7,12 +7,13 @@ import feedparser
 import requests
 import logging
 
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s: %(message)s',
-    level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-logging.Formatter.converter = time.gmtime 
+def setup_time():
+    logging.basicConfig(
+        format='%(asctime)s %(levelname)s: %(message)s',
+        level=logging.INFO,
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    logging.Formatter.converter = time.gmtime 
 
 
 def fetch_data(feed: str):

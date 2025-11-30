@@ -1,7 +1,6 @@
 import json
-import time
 from config import ACKS, AUDIO_PATH, CHUNK_SIZE, KAFKA_URL, NUMBER_OF_PODCAST_FOR_EACH_PODCAST, PORT, RAW_PATH, RSS_FEEDS, TOPIC
-from utils import  config, delivery_report, download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data
+from utils import  config, delivery_report, download_podcast_mp3, fetch_data, parse_data, sanitize_filename, save_data, setup_time
 import logging
 from confluent_kafka import Producer
 
@@ -26,10 +25,7 @@ def pipeline():
         for episode in data_list[:NUMBER_OF_PODCAST_FOR_EACH_PODCAST]:
             logging.info(f"Processing episode: {episode['title']}")
             safe_filename = sanitize_filename(episode['title'])
-            # full_path = download_podcast_mp3(episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
-            # I only use this for testing the stt cause i have a small audio file called test.mp3
-            full_path= "data/bronze/audio/test.mp3"
-
+            full_path = download_podcast_mp3(episode['audio_url'], safe_filename, AUDIO_PATH, CHUNK_SIZE)
             episode ['full_path']= full_path
 
             logging.info(f"Saving {safe_filename}  episode to JSON")
@@ -47,12 +43,5 @@ def pipeline():
     logging.info("Pipeline completed successfully")
 
 if __name__ == "__main__":
-
-    logging.basicConfig(
-    format='%(asctime)s %(levelname)s: %(message)s',
-    level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    logging.Formatter.converter = time.gmtime  
-
+    setup_time()  
     pipeline()
