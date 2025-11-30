@@ -24,5 +24,5 @@ NUMBER_OF_PODCAST_FOR_EACH_PODCAST= 10
 
 KAFKA_URL= os.getenv('PS_KAFKA_URL', 'kafka')
 PORT = int(os.getenv('PS_KAFKA_PORT', '9092'))
-ACKS = int(os.getenv('PS_ACKS', 1))
-TOPIC= os.getenv('PS_TOPIC_OUT', 'podcast_audio')
+ACKS = int(os.getenv('PS_KAFKA_ACKS', 1))
+TOPIC= os.getenv('PS_KAFKA_TOPIC_OUT', 'podcast_audio')
